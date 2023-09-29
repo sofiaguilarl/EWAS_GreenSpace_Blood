@@ -1,6 +1,6 @@
 ###########################################
 # META-ANALYSIS M3 Green Spaces Cord blood 
-##Sofía Aguilar Lacasaña
+##SofÃ­a Aguilar LacasaÃ±a
 ###########################################
 
 ## ######################################### ##
