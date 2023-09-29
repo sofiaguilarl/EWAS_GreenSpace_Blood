@@ -1,6 +1,6 @@
 ####################################################################
 #QC Green Spaces Life-long- Childblood EUR MODEL 3
-#Sofía Aguilar Lacasaña
+#SofÃ­a Aguilar LacasaÃ±a
 #13.04.2023
 #####################################################################
 
@@ -77,7 +77,7 @@ n <- c(NA)
 #           to be defined if you want to filter CpGs with low representation.
 #         If defined value in colname_NforProbe not exists, no filter will be applied
 #  - pcMissingSamples :
-#        Máximum percent of missing samples allowed,
+#        MÃ¡ximum percent of missing samples allowed,
 
 colname_NforProbe <- 'N_for_probe'
 pcMissingSamples <- 0.5 #hablar con Mariona pero creo que queremos esto
