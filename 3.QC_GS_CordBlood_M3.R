@@ -1,6 +1,6 @@
 ####################################################################
 #QC Green Spaces - Cord blood EUR MODEL 3 
-#Sofía Aguilar Lacasaña
+#SofÃ­a Aguilar LacasaÃ±a
 #12.01.2023
 #####################################################################
 
@@ -62,7 +62,7 @@ files<-c("/PROJECTES/INMA_OMICS/analyses/PACE/green_spaces_SA/results/QC/preQC/E
 
 
 # Result folder
-results_folder <- 'QC_05052023'
+results_folder <- 'QC_03052023'
 
 # Prefixes for each file
 
@@ -93,7 +93,7 @@ n <- c(NA)
 #           to be defined if you want to filter CpGs with low representation.
 #         If defined value in colname_NforProbe not exists, no filter will be applied
 #  - pcMissingSamples :
-#        Máximum percent of missing samples allowed,
+#        MÃ¡ximum percent of missing samples allowed,
 
 colname_NforProbe <- 'N_for_probe'
 pcMissingSamples <- 0.5 #hablar con Mariona pero creo que queremos esto
