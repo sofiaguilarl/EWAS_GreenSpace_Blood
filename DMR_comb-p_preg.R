@@ -1,6 +1,6 @@
 ########################
 #DMR comb-p
-#Sofía Aguilar Lacasaña
+#SofÃ­a Aguilar LacasaÃ±a
 #15.05.2023
 ########################
 
