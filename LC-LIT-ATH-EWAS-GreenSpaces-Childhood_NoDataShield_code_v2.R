@@ -1819,7 +1819,7 @@ write.table(lambdas.table, paste0("Lambdas_",cohort,".",ancestry,"_M4_",Date,".t
 #IMPORTANT
 #################
 
-#Repeat from STEP 9 to STEP 14 for each of the major ancestry groups in your cohort with more than >100 samples.
+#Repeat from STEP 9 to STEP 13 for each of the major ancestry groups in your cohort with more than >100 samples.
 
 ############################
 #THANK YOU!
