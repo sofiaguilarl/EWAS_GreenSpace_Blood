@@ -1,5 +1,5 @@
 ####################################################################
-#QC Green Spaces Life-long- Childblood EUR MODEL 3
+#QC Green Spaces Cumulative - Childblood EUR MODEL 3
 #Sofía Aguilar Lacasaña
 #13.04.2023
 #####################################################################
