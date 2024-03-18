@@ -2,4 +2,5 @@
 
 In this GitHub, you will find scripts for the analyses performed in this study. 
 
-The cohort-specific epigenome-wide association studies (EWAS). You will find the scripts used in local and through Data Aggregation Through Anonymous Summary-statistics from Harmonised Individual-level Databases (DataSHIELD) (Gaye et al., 2014). 
+
+- The cohort-specific epigenome-wide association studies (EWAS):  You will find the scripts used in local and through Data Aggregation Through Anonymous Summary-statistics from Harmonised Individual-level Databases (DataSHIELD) (Gaye et al., 2014). 
