@@ -456,18 +456,6 @@ ds.summary("pheno$nRBC",datasources = conns)
 ### Now we have checked that variables in the ExpressionSet are coded correctly.  
 
 #EXAMPLE MAIN MODEL 
-
-###########################
-#STEP 8: ANALYSES - MODEL 1
-###########################
-
-#M1: Cord blood methylation ~ Green Spaces pregnancy + maternal age + maternal smoking pregnancy + child's sex + 
-#childs ancestry within major ancestry group (optional) + batch (optional) + cohort (optional) + selection variable (optional)
-
-#IMPORTANT! Before running the analyses, please make sure that you have done STEP 7) Check variables: summaries and plots. In this way,
-#you make sure that the variables are coded as indicated in the analysis plan.
-
-#EXAMPLE MAIN MODEL 
 ################################################################################################################
 #ESET M3
 #Select variables needed for model 3
