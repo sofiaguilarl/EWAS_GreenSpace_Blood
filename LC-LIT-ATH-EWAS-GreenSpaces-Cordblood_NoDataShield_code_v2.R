@@ -1,6 +1,6 @@
 ###########################################################################################
 # EWAS Green Spaces and Cord Blood- No DataSHIELD code (using a ExpressionSet)  
-# Sofía Aguilar Lacasaña (sofia.aguilar@isglobal.org)
+# SofÃ­a Aguilar LacasaÃ±a (sofia.aguilar@isglobal.org)
 # 14/06/2022 
 #V2 
 ###########################################################################################
@@ -82,8 +82,8 @@ CreatedExpressionSet
 # element names: exprs
 # protocolData: none
 # phenoData
-# sampleNames: 3998888002_R01C02 3998888002_R02C01 ...
-#  7927554155_R03C01 (361 total)
+# sampleNames: sample1 sample2 ...
+#  sample361 (361 total)
 # varLabels: id_methyl id ... nRBC (15 total)
 # varMetadata: labelDescription
 # featureData: none
@@ -237,8 +237,8 @@ newmset.EUR
 # element names: exprs
 # protocolData: none
 # phenoData
-# sampleNames: 3998888002_R01C02 3998888002_R02C01 ...
-#  7927554154_R06C02 (312 total)
+# sampleNames: sample1 sample2 ...
+#  sample312 (312 total)
 # varLabels: id id_methyl ... no2_preg (81 total)
 # varMetadata: labelDescription
 # featureData: none
@@ -1018,7 +1018,7 @@ write.table(lambdas.table, paste0("Lambdas_",cohort,".",ancestry,"_M1_",Date,".t
 #STEP 10: ANALYSES- MODEL 2
 ###########################
 
-#M2:Cord blood methylation = green spaces pregnancy + maternal age + maternal smoking pregnancy + child’s sex + child’s ancestry 
+#M2:Cord blood methylation = green spaces pregnancy + maternal age + maternal smoking pregnancy + childÂ’s sex + childÂ’s ancestry 
 #within major ancestry group (optional) + batch (optional) + cohort (optional) + selection variables (optional) + maternal education
 #+ neighbourhood socio-economic status 
 
@@ -1255,7 +1255,7 @@ write.table(lambdas.table, paste0("Lambdas_",cohort,".",ancestry,"_M2_",Date,".t
 ###########################
 
 
-#M3:Cord blood methylation = green spaces pregnancy + maternal age + maternal smoking pregnancy + child’s sex + child’s
+#M3:Cord blood methylation = green spaces pregnancy + maternal age + maternal smoking pregnancy + childÂ’s sex + childÂ’s
 #ancestry within major ancestry group (optional) + batch (optional) + cohort (optional) + selection variables (optional) + maternal education +
 #neighbourhood socio-economic status + blood cellular composition
 
@@ -1580,7 +1580,7 @@ setwd(paste0(res.dir,"/EWAS.Results"))
 
 ### Design the model
 
-t <- proc.time() # Inicia el cronómetro
+t <- proc.time() # Inicia el cronÃ³metro
 
 design.Preg_N300_M3<-model.matrix(~ndvi300_preg.iqr + agebirth_m_y + preg_smk + sex_methyl + edu_m_0 + areases_tert_preg 
 + Bcell + CD4T + CD8T + Gran + Mono + NK + nRBC, data=pData(newmset.EUR.M3))
@@ -1703,7 +1703,7 @@ write.table(lambdas.table, paste0("Lambdas_",cohort,".",ancestry,"_M3_",Date,".t
 ###########################
 
 #M4:Cord blood methylation = green spaces pregnancy + maternal education + neighbourhood socio-economic status + maternal age +
-#maternal smoking pregnancy + child’s sex + child’s ancestry within major ancestry group (optional) + batch (optional) + cohort (optional) + 
+#maternal smoking pregnancy + childÂ’s sex + childÂ’s ancestry within major ancestry group (optional) + batch (optional) + cohort (optional) + 
 #selection variables (optional) + blood cellular composition + PM2.5 
 
 #NOTE: this model is not adjusted by gestational age and birth weight
@@ -2149,456 +2149,6 @@ lambdas.table<-rbind(lambda.Preg_N300_M4,lambda.Preg_N100_M4,lambda.Preg_AcGS_M4
 colnames(lambdas.table)<-"Lambdas M4"
 
 write.table(lambdas.table, paste0("Lambdas_",cohort,".",ancestry,"_M4_",Date,".txt"), na="NA")
-
-
-###########################
-#STEP 13: ANALYSES: MODEL 5
-###########################
-
-#M5:Cord blood methylation = green spaces pregnancy + maternal age + maternal smoking pregnancy + child’s sex + child’s ancestry within
-# major ancestry group (optional) + batch (optional) + cohort (optional) + selection variables (optional) + maternal education + 
-# neighbourhood socio-economic status+ blood cellular composition + PM2.5 + birth weight + gestational age
-                                                
-#IMPORTANT! Before running the analyses, please make sure that you have done STEP 8) Check variables: summaries and plots. In this way, 
-# you make sure that the variables are coded as indicated in the analysis plan.
-
-###########################################
-#13.1) Select variables needed for Model 5
-###########################################
-
-dd.EUR.M5<-pData(newmset.EUR)[,c("ndvi300_preg","ndvi100_preg","greenyn300_preg","agebirth_m_y","preg_smk","sex_methyl","edu_m_0",
-                                 "areases_tert_preg","Bcell","CD4T","CD8T","Gran","Mono","NK","nRBC","pm25_preg","bw_methyl","ga_methyl")]
-
-###########################
-#13.2) Complete cases M5
-###########################
-
-############################################################################
-#13.2.1) Create a new dataframe with complete cases from variables in Model 5
-
-dd.EUR.M5.cc<-dd.EUR.M5[complete.cases(dd.EUR.M5),]
-
-##################################
-#13.2.2) Complete cases M5 samples
-
-samplescmp.M5<-rownames(dd.EUR.M5.cc)
-
-################################################################
-#13.2.3) Subset the ExpressionSet with Complete cases M5 samples
-
-newmset.EUR.M5<-newmset.EUR[,(sampleNames(newmset.EUR) %in% samplescmp.M5)]
-
-##########################################################################################
-#13.3)Create variables with sorrounding residential greenness(NDVI Variable) transformation  
-##########################################################################################
-
-### The effect of Residential Sorrounding Greenness variable (NDVI) will be reported by IQR, thus we will transform NDVI300 pregnancy
-# and NDVI100 pregnancy variables.
-
-########################
-#13.3.1) NDVI300 IQR preg
-
-### Calculate the IQR of NDVI300
-ndvi300.iqr<-iqr(dd.EUR.M5.cc$ndvi300_preg,na.rm=TRUE)
-
-### The formula to create this variable corresponds to the original variable value divided by the interquartile value of the variable 
-dd.EUR.M5.cc$ndvi300_preg.iqr<-dd.EUR.M5.cc$ndvi300_preg/ndvi300.iqr
-summary(dd.EUR.M5.cc$ndvi300_preg.iqr)
-
-#########################
-#13.3.2) NDVI100 IQR preg
-
-### Calculate the IQR of NDVI100
-ndvi100.iqr<-iqr(dd.EUR.M5.cc$ndvi100_preg,na.rm=TRUE)
-
-### The formula to create this variable corresponds to the original variable value divided by the interquartile value of the variable 
-dd.EUR.M5.cc$ndvi100_preg.iqr<-dd.EUR.M5.cc$ndvi100_preg/ndvi100.iqr
-summary(dd.EUR.M5.cc$ndvi100_preg.iqr)
-
-#######################################################################################################################
-#13.4)Include the new dataframe with complete cases M5 and the created NDVI variables transformed in the ExpressionSet
-#######################################################################################################################
-
-#Include the new dataframe with the complete case samples for M5 and the created NDVI variables transformed in the ExpressionSet subsetted in section 13.2.3.
-
-###################
-#13.4.1) Check order 
-
-# Before including the new dataframe with the complete case samples for M5 and the created NDVI variables transformed in the ExpressionSet,
-# check if the samples are in the same order. If you do not order samples as they are in the ExpressionSet, you could incorrectly assign the values 
-# of the variables to the samples and therefore also to the methylation. 
-
-table(ifelse(rownames(dd.EUR.M5.cc)==sampleNames(newmset.EUR.M5),"Matched","--NOT MATCHED--"))
-#Matched
-#    357
-
-#In our case, samples are ordered in the same way. In case that your samples are not ordered, please, see STEP 5 for an example of how to do this. 
-
-#############################################################
-#13.4.2) Include the new dataframe in the ExpressionSet
-
-pData(newmset.EUR.M5)<-dd.EUR.M5.cc
-
-####################################
-#13.5) Descriptive analyses for M5
-###################################
-
-#13.5.1) Descriptive tables
-#13.5.2) Correlation between exposures
-#13.5.3) Associations between green spaces vars and covariates
-
-
-###########################
-#13.5.1) Descriptive tables
-
-### Go to the Descriptive.Tables directory
-setwd(paste0(res.dir,"Descriptive.info/Descriptive.Tables"))
-
-#a) Mean (SD)
-##############
-
-descriptive.vars.M5<-colnames(dd.EUR.M5.cc)#Select variables for the descriptives
-
-dd.EUR.M5.cc %>%
-  dplyr::mutate(
-    ndvi300_preg = ff_label(ndvi300_preg, "NDVI300 preg"),ndvi300_preg.iqr = ff_label(ndvi300_preg.iqr, "NDVI300 preg IQR"),
-    ndvi100_preg = ff_label(ndvi100_preg, "NDVI100 preg"),ndvi100_preg.iqr = ff_label(ndvi100_preg.iqr, "NDVI100 preg IQR"),
-    greenyn300_preg = ff_label(greenyn300_preg, "Green Access"),agebirth_m_y = ff_label(agebirth_m_y, "Maternal Age at delivery"),
-    edu_m_0 = ff_label(edu_m_0, "Maternal education"),areases_tert_preg = ff_label(areases_tert_preg, "Neighbourhood socio-economic status"),
-    preg_smk = ff_label(preg_smk, "Maternal smoking preg"),sex_methyl = ff_label(sex_methyl, "Child sex"),pm25_preg = ff_label(pm25_preg, "PM2.5 levels preg"),
-    bw_methyl = ff_label(bw_methyl, "Birth weight"),ga_methyl = ff_label(ga_methyl, "Gestational age")
-    )%>%
-  summary_factorlist(dependent=NULL,descriptive.vars.M5,cont="mean",column=TRUE,na_include=TRUE,total_col=TRUE)->DescriptiveTable.Mean.M5
-
-DescriptiveTable.Mean.M5<-DescriptiveTable.Mean.M5[,c("label","levels","Total")]
-colnames(DescriptiveTable.Mean.M5)<-c("Variables","levels","Mean (SD) or n(%)")
-
-#Median (IQR)
-#############
-
-dd.EUR.M5.cc %>%
-  dplyr::mutate(
-    ndvi300_preg = ff_label(ndvi300_preg, "NDVI300 preg"),ndvi300_preg.iqr = ff_label(ndvi300_preg.iqr, "NDVI300 preg IQR"),
-    ndvi100_preg = ff_label(ndvi100_preg, "NDVI100 preg"),ndvi100_preg.iqr = ff_label(ndvi100_preg.iqr, "NDVI100 preg IQR"),
-    greenyn300_preg = ff_label(greenyn300_preg, "Green Access"),agebirth_m_y = ff_label(agebirth_m_y, "Maternal Age at delivery"),
-    edu_m_0 = ff_label(edu_m_0, "Maternal education"),areases_tert_preg = ff_label(areases_tert_preg, "Neighbourhood socio-economic status"),
-    preg_smk = ff_label(preg_smk, "Maternal smoking preg"),sex_methyl = ff_label(sex_methyl, "Child sex"),pm25_preg = ff_label(pm25_preg, "PM2.5 levels preg"),
-    bw_methyl = ff_label(bw_methyl, "Birth weight"),ga_methyl = ff_label(ga_methyl, "Gestational age")
-    )%>%
-  summary_factorlist(dependent=NULL,descriptive.vars.M5,cont="median",column=TRUE,na_include=TRUE,total_col=TRUE)->DescriptiveTable.Median.M5
-
-DescriptiveTable.Median.M5<-DescriptiveTable.Median.M5[,c("label","levels","Total")]
-colnames(DescriptiveTable.Median.M5)<-c("Variables","levels","Mean (SD) or n(%)")
-
-### Create a single descriptive table with all variables
-
-DescriptiveTable.final.M5<-cbind(DescriptiveTable.Mean.M5,DescriptiveTable.Median.M5)
-DescriptiveTable.final.M5<-DescriptiveTable.final.M5[,c(1:3,5:6)]
-             
-write.table(
-  DescriptiveTable.final.M5, file=paste0("M5.Descriptive.table.",cohort,".",ancestry,".cc.",Date,".txt"),col.names=T, row.names=F, quote=F, sep="\t")
-
-######################################
-#13.5.2) Correlation between exposures
-
-### Go to the Correlations directory
-setwd(paste0(res.dir,"Descriptive.info/Correlations"))
-
-### a)Correlation between NDVI300 and NDVI100 (Continuous vs continuous)
-#########################################################################
-
-cor.ndvi300.100<-dd.EUR.M5.cc[,c("ndvi300_preg","ndvi100_preg")]
-#Create plot
-plot.cor.ndvi300.100<-ggpairs(cor.ndvi300.100, title="Correlation between NDVI300 and NDVI100") 
-
-#Define a path 
-file.create(paste0("M5.CorrelationNDVI300vsNDVI100.",cohort,".",ancestry,"_",Date,".pdf"))
-
-path1.M5<-file.path(paste0("M5.CorrelationNDVI300vsNDVI100.",cohort,".",ancestry,"_",Date,".pdf"))
-
-pdf(path1.M5)
-print(plot.cor.ndvi300.100)
-dev.off()
-
-###b)Correlation between Green Access and NDVI300(Categorical vs Continuous)
-################################################################################
-
-#Create Plot
-plot.cor.ndvi300.GreenAccess<-ggplot(dd.EUR.M5.cc,aes(x=greenyn300_preg, y = ndvi300_preg.iqr)) + ggtitle ("Correlation between Green access vs NDVI300") +
-  geom_boxplot()
-  
-#Define a path 
-file.create(paste0("M5.BoxPlot.GreenAccessvsNDVI300.",cohort,".",ancestry,"_",Date,".pdf"))
-
-path2.M5<-file.path(paste0("M5.BoxPlot.GreenAccessvsNDVI300.",cohort,".",ancestry,"_",Date,".pdf"))
-
-pdf(path2.M5)
-print(plot.cor.ndvi300.GreenAccess)
-dev.off()
-  
-###c)Correlation between Green Access and NDVI100(Categorical vs Continuous)
-################################################################################
-
-#Create Plot
-plot.cor.ndvi100.GreenAccess<-ggplot(dd.EUR.M5.cc,aes(x=greenyn300_preg, y = ndvi100_preg.iqr)) + ggtitle ("Correlation between Green access vs NDVI100") +
-  geom_boxplot()
-  
-#Define a path 
-file.create(paste0("M5.BoxPlot.GreenAccessvsNDVI100.",cohort,".",ancestry,"_",Date,".pdf"))
-
-path3.M5<-file.path(paste0("M5.BoxPlot.GreenAccessvsNDVI100.",cohort,".",ancestry,"_",Date,".pdf"))
-
-pdf(path3.M5)
-print(plot.cor.ndvi100.GreenAccess)
-dev.off()
-  
-
-###############################################################
-#13.5.3) Associations between Green Spaces vars and Covariates
-
-### Go to the GSvsCovariates directory
-setwd(paste0(res.dir,"Descriptive.info/GSvsCovariates"))
-
-
-############################################################################
-##a) Association beweeen Continuous Green spaces variables  and Covariables
-
-GSexposures<-c("ndvi300_preg.iqr","ndvi100_preg.iqr")
-
-Covariates<-c("agebirth_m_y","preg_smk","sex_methyl","edu_m_0","areases_tert_preg",
-              "Bcell","CD4T","CD8T","Gran","Mono","NK","nRBC","pm25_preg","bw_methyl","ga_methyl")#Specify variables M5 
-
-coefs.M5.cont=as.data.frame(matrix(NA,nrow=1,ncol=10))
-colnames(coefs.M5.cont)=c("DateTime","GreenSpaceVar","Covariates","Model","BetaNoStand", "SE", "P","R2","R2adj","N")
-
-count=1
-for(j in 1:length(GSexposures)) {
-  print(GSexposures[j])
-  results=NULL
-  for(i in 1:length(Covariates)) {
-    print(Covariates[i])
-    ff <- paste0(GSexposures[j],"~",Covariates[i],sep="") 
-    fit <- lm(ff,data=dd.EUR.M5.cc)
-    s <-summary(fit)
-    res <- s$coefficients
-    R2<-s$r.squared
-    R2.adj<- s$adj.r.squared
-    
-    #Save analysis details and coefficients
-    coefs.M5.cont[count,1]=gsub(" ","_",Sys.time())
-    coefs.M5.cont[count,2]=GSexposures[j]
-    coefs.M5.cont[count,3]=Covariates[i]
-    coefs.M5.cont[count,4]=ff
-    coefs.M5.cont[count,5:7]=res[2,c(1,2,4)]
-    coefs.M5.cont[count,8]= R2
-    coefs.M5.cont[count,9]=R2.adj
-    coefs.M5.cont[count,10]= s$df[2]
-    
-    count=count+1
-    
-  }
-}
-
-#Multiple testing correction by FDR 
-
-### ndvi300 pregnancy IQR vs Covariates
-coefs.M5.subset.ndvi300<-subset(coefs.M5.cont, coefs.M5.cont$GreenSpaceVar == "ndvi300_preg.iqr")
-coefs.M5.subset.ndvi300$Padj<-  p.adjust(coefs.M5.subset.ndvi300$P, method="fdr")
-
-### ndvi100 pregnancy IQR vs Covariates
-coefs.M5.subset.ndvi100<-subset(coefs.M5.cont, coefs.M5.cont$GreenSpaceVar == "ndvi100_preg.iqr")
-coefs.M5.subset.ndvi100$Padj<-  p.adjust(coefs.M5.subset.ndvi100$P, method="fdr")
-
-### Create one table with all results
-coefs.M5.cont.all<-rbind(coefs.M5.subset.ndvi300,coefs.M5.subset.ndvi100)
-
-write.csv(coefs.M5.cont.all,paste0("M5.GScontVars.Covariates_",cohort,".",ancestry,"_",Date,".csv"), row.names = TRUE)
-
-#############################################################################
-##b) Association beweeen Categorical Green spaces variable  and Covariables 
-GSexposures<-"greenyn300_preg"
-
-Covariates<-c("agebirth_m_y","preg_smk","sex_methyl","edu_m_0","areases_tert_preg",
-              "Bcell","CD4T","CD8T","Gran","Mono","NK","nRBC","pm25_preg","bw_methyl","ga_methyl")#Specify variables M5  
-
-coefs.M5.cat=as.data.frame(matrix(NA,nrow=1,ncol=9))
-colnames(coefs.M5.cat)=c("DateTime","GreenSpaceVar","Covariates","Model","BetaNoStand", "SE", "P","R2","N")
-
-count=1
-for(j in 1:length(GSexposures)) {
-  print(GSexposures[j])
-  results=NULL
-  for(i in 1:length(Covariates)) {
-    print(Covariates[i])
-    ff <- paste0(GSexposures[j]," ~ ",Covariates[i],sep="") 
-    fit <- glm(ff,data=dd.EUR.M5.cc,family="binomial",na.action=na.omit)
-    s <-summary(fit)
-    res <- s$coefficients
-    R2<- with(s,1 - (deviance/null.deviance))
-        
-    #Save analysis details and coefficients
-    coefs.M5.cat[count,1]=gsub(" ","_",Sys.time())
-    coefs.M5.cat[count,2]=GSexposures[j]
-    coefs.M5.cat[count,3]=Covariates[i]
-    coefs.M5.cat[count,4]=ff
-    coefs.M5.cat[count,5:7]=res[2,c(1,2,4)]
-    coefs.M5.cat[count,8]= R2
-    coefs.M5.cat[count,9]= s$df[2]
-    
-    count=count+1
-    
-  }
-}
-
-write.csv(coefs.M5.cat,paste0("M5.GScatVar.Covariates_",cohort,".",ancestry,"_",Date,".csv"), row.names = TRUE)
-
-##############################################################################
-#13.6) EWAS GREEN SPACES PREGNANCY USING ROBUST LINEAR REGRESSIONS WITH LIMMA
-##############################################################################
-
-### Before starting with the EWAS analysis...
-
-### Go to the EWAS results directory
-setwd(paste0(res.dir,"/EWAS.Results"))
-
-#For the analysis use ExpressionSet subset created in section 13.1.3. 
-
-#newmset.EUR.M5
-
-# 13.6.1) Exposure NDVI300 Pregnancy 
-# 13.6.2) Exposure NDVI100 Pregnancy 
-# 13.6.3) Exposure Green Access Pregnancy 
-
-###################################
-# 13.6.1) Exposure NDVI300 Pregnancy 
-
-################
-# Preg_N300_M5
-################
-
-# a) Run EWAS
-
-### Design the model
-design.Preg_N300_M5<-model.matrix(~ndvi300_preg.iqr +  agebirth_m_y + preg_smk + sex_methyl + edu_m_0 + areases_tert_preg +
-                                    Bcell + CD4T + CD8T + Gran + Mono + NK + nRBC + pm25_preg+bw_methyl + ga_methyl, data=pData(newmset.EUR.M5))
-
-### Run Robust linear regression model with limma
-fit.Preg_N300_M5<-limma::lmFit(newmset.EUR.M5,design=design.Preg_N300_M5, method="robust")
-fit.Preg_N300_M5<-limma::eBayes(fit.Preg_N300_M5)
-Preg_N300_M5<-limma::topTable(fit.Preg_N300_M5, coef =2, number = Inf,sort.by="none",confint=TRUE)
-Preg_N300_M5$SE <- (sqrt(fit.Preg_N300_M5$s2.post) *fit.Preg_N300_M5$stdev.unscaled)[, 2]
-head(Preg_N300_M5)
-
-###  Export results
-setwd(paste0(res.dir,"/EWAS.Results"))
-write.table(Preg_N300_M5, paste0("EWAS_GS_",cohort,".",ancestry,"_Preg_N300_M5_",Date,".txt"), na="NA") 
-            
-# b) Calculate lambda
-lambda.Preg_N300_M5<- qchisq(median(Preg_N300_M5$P.Value,na.rm=T), df = 1, lower.tail = F)/qchisq(0.5, 1)
-lambda.Preg_N300_M5
-
-# c) QQ plot 
-
-### Go to QQplots directory
-setwd(paste0(res.dir,"/EWAS.Results/QQPlots"))
-
-pvals<-Preg_N300_M5$P.Value
-jpeg(paste0("QQPlot_",cohort,".",ancestry,"_Preg_N300_M5_",Date,".jpg"))
-qq(pvals,main=paste0("QQPlot_",cohort,".",ancestry,"_Preg_N300_M5")) 
-dev.off()
-
-###################################
-# 13.6.2) Exposure NDVI100 Pregnancy 
-            
-################
-# Preg_N100_M5
-################
-
-# a) Run EWAS
-
-### Design the model
-design.Preg_N100_M5<-model.matrix(~ndvi100_preg.iqr  +  agebirth_m_y + preg_smk + sex_methyl+ edu_m_0 + areases_tert_preg + 
-                                    Bcell + CD4T + CD8T + Gran + Mono + NK + nRBC + pm25_preg+bw_methyl + ga_methyl, data=pData(newmset.EUR.M5))
-
-### Run Robust linear regression model with limma
-fit.Preg_N100_M5<-limma::lmFit(newmset.EUR.M5,design=design.Preg_N100_M5, method="robust")
-fit.Preg_N100_M5<-limma::eBayes(fit.Preg_N100_M5)
-Preg_N100_M5<-limma::topTable(fit.Preg_N100_M5, coef =2, number = Inf,sort.by="none",confint=TRUE)
-Preg_N100_M5$SE <- (sqrt(fit.Preg_N100_M5$s2.post) *fit.Preg_N100_M5$stdev.unscaled)[, 2]
-head(Preg_N100_M5)
-
-###  Export results
-
-setwd(paste0(res.dir,"/EWAS.Results"))
-write.table(Preg_N100_M5, paste0("EWAS_GS_",cohort,".",ancestry,"_Preg_N100_M5_",Date,".txt"), na="NA") 
-            
-# b) Calculate lambda
-lambda.Preg_N100_M5<- qchisq(median(Preg_N100_M5$P.Value,na.rm=T), df = 1, lower.tail = F)/qchisq(0.5, 1)
-lambda.Preg_N100_M5
-
-# c) QQ plot 
-
-setwd(paste0(res.dir,"/EWAS.Results/QQPlots"))
-
-pvalsM5<-Preg_N100_M5$P.Value
-jpeg(paste0("QQPlot_",cohort,".",ancestry,"_Preg_N100_M5_",Date,".jpg"))
-qq(pvalsM5,main=paste0("QQPlot_",cohort,".",ancestry,"_Preg_N100_M5")) 
-dev.off()   
-
-#########################################
-# 13.6.3) Exposure Green Access Pregnancy                                                                   
-                                
-################
-# Preg_AcGS_M5
-################
-
-# a) Run EWAS
-
-### Design the model
-
-design.Preg_AcGS_M5<-model.matrix(~greenyn300_preg +  agebirth_m_y + preg_smk + sex_methyl + edu_m_0 + areases_tert_preg +
-                                    Bcell + CD4T + CD8T + Gran + Mono + NK + nRBC + pm25_preg+bw_methyl + ga_methyl, data=pData(newmset.EUR.M5))
-
-### Run Robust linear regression model with limma
-fit.Preg_AcGS_M5<-limma::lmFit(newmset.EUR.M5,design=design.Preg_AcGS_M5, method="robust")
-fit.Preg_AcGS_M5<-limma::eBayes(fit.Preg_AcGS_M5)
-Preg_AcGS_M5<-limma::topTable(fit.Preg_AcGS_M5, coef =2, number = Inf,sort.by="none",confint=TRUE)
-Preg_AcGS_M5$SE <- (sqrt(fit.Preg_AcGS_M5$s2.post) *fit.Preg_AcGS_M5$stdev.unscaled)[, 2]
-head(Preg_AcGS_M5)
-
-###  Export results
-
-setwd(paste0(res.dir,"/EWAS.Results"))
-
-write.table(Preg_AcGS_M5, paste0("EWAS_GS_",cohort,".",ancestry,"_Preg_AcGS_M5_",Date,".txt"), na="NA") 
-            
-# b) Calculate lambda
-lambda.Preg_AcGS_M5<- qchisq(median(Preg_AcGS_M5$P.Value,na.rm=T), df = 1, lower.tail = F)/qchisq(0.5, 1)
-lambda.Preg_AcGS_M5
-
-# c) QQ plot 
-
-setwd(paste0(res.dir,"/EWAS.Results/QQPlots"))
-
-pvalsM5<-Preg_AcGS_M5$P.Value
-jpeg(paste0("QQPlot_",cohort,".",ancestry,"_Preg_AcGS_M5_",Date,".jpg"))
-qq(pvalsM5,main=paste0("QQPlot_",cohort,".",ancestry,"_Preg_AcGS_M5")) 
-dev.off()
-              
-####################
-#13.7) LAMBDAS M5
-####################
-
-### Create lambdas table M5
-
-setwd(paste0(res.dir,"/EWAS.Results/Lambdas"))
-                                                            
-lambdas.table<-rbind(lambda.Preg_N300_M5,lambda.Preg_N100_M5,lambda.Preg_AcGS_M5)
-colnames(lambdas.table)<-"Lambdas M5"
-
-write.table(lambdas.table, paste0("Lambdas_",cohort,".",ancestry,"_M5_",Date,".txt"), na="NA")
-
-
 
 #################
 #IMPORTANT
