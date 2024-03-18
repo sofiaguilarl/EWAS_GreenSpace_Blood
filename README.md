@@ -2,7 +2,7 @@
 
 In this GitHub, you will find scripts for the analyses performed in this study. 
 
-- The cohort-specific epigenome-wide association studies (EWAS):  You will find the scripts used in local and through Data Aggregation Through Anonymous Summary-statistics from Harmonised Individual-level Databases (DataSHIELD).
+- The cohort-specific epigenome-wide association studies (EWAS):  You will find the scripts used in local (`limma R package`= (Ritchie et al., 2015) and through Data Aggregation Through Anonymous Summary-statistics from Harmonised Individual-level Databases (DataSHIELD) (`ds.omics R package`).
 
     - LC-LIT-ATH-EWAS-GreenSpaces-Cordblood_NoDataShield_code_v2.R
     - LC-LIT-ATH-EWAS-GreenSpaces-Childhood_NoDataShield_code_v2.R
