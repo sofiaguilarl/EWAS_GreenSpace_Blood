@@ -16,7 +16,7 @@
 
 ###########################################
 ### Change to your own working directory
-setwd("~/DOCTORADO/TERCER_AÑO/EWAS_GREENSPACES_blood/DataSHIELD/Results_18112022")
+setwd("~/DOCTORADO/TERCER_AÃ‘O/EWAS_GREENSPACES_blood/DataSHIELD/Results_18112022")
 
 ###########################################
 ### Set initial parameters
@@ -61,7 +61,7 @@ library(dplyr)
 
 #Log in Opal
 
-o <- opalr::opal.login(username = "lifecycle_saguilar", password = '',
+o <- opalr::opal.login(username = "username", password = '',
                        url = "https://opal.isglobal.org/repo")
 opal.projects(o)
 
@@ -76,11 +76,6 @@ conns <- DSI::datashield.login(logins = logindata, assign = TRUE,
                                symbol = 'res')
 datashield.tables(conns)
 DSI::datashield.logout(conns)
-
-
-
-
-
 
 ##########################################################################################
 ### STEP 2: Prepare and load the methylation data and the metadata
@@ -308,14 +303,14 @@ ancestry<-"EUR"
 Date<- Sys.Date()
 
 ### Now, choose the working directory where you want to create the new directory to save all results for European Samples
-setwd("~/DOCTORADO/TERCER_AÑO/EWAS_GREENSPACES_blood/DataSHIELD/Results_18112022")
+setwd("~/DOCTORADO/TERCER_AÃ‘O/EWAS_GREENSPACES_blood/DataSHIELD/Results_18112022")
 #Change to the directory where you want to save results
 
 ### Create a new directory
 dir.create("EUR")
 
 ### Create an object with the path of this new directory
-res.dir<- "C:/Users/saguilar/Documents/DOCTORADO/TERCER_AÑO/EWAS_GREENSPACES_blood/DataSHIELD/Results_18112022/EUR" 
+res.dir<- "C:/Users/saguilar/Documents/DOCTORADO/TERCER_AÃ‘O/EWAS_GREENSPACES_blood/DataSHIELD/Results_18112022/EUR" 
 
 ### Go to the new directory
 setwd(res.dir)
