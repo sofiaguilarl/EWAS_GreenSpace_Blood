@@ -1,6 +1,6 @@
 ###########################################################################################
 # EWAS Green Spaces and Child Blood- No DataSHIELD code (using a ExpressionSet)  
-# Sofía Aguilar Lacasaña (sofia.aguilar@isglobal.org)
+# SofÃ­a Aguilar LacasaÃ±a (sofia.aguilar@isglobal.org)
 # 16/06/2022
 #V2
 ###########################################################################################
@@ -82,7 +82,7 @@ CreatedExpressionSet
 #  element names: exprs
 #protocolData: none
 #phenoData
-#  sampleNames: BIB_10041_1A BIB_10058_1X ... SAB_651_1X (1132 total)
+#  sampleNames: sample1 sample2 ... sample1132 (1132 total)
 #  varLabels: id X ... gwas_pc10_eur (40 total)
 #  varMetadata: labelDescription
 #featureData: none
@@ -119,7 +119,7 @@ colnames(metadataEset)
 #[37] "gwas_pc7_eur"  "gwas_pc8_eur"  "gwas_pc9_eur"  "gwas_pc10_eur"
 
 ##############################################
-### STEP 3: Create Life-Long Variables 
+### STEP 3: Create cumulative Variables 
 #############################################
 
 # For the calculation of these variables, we will first calculate the average between these four time-periods:
@@ -129,13 +129,13 @@ colnames(metadataEset)
 # -	early childhood (=>3 to <=7y)
 # - late childhood (>7 to <=10y)
 
-#The life-long variable will correspond to the average of these time-periods. Each cohort should include as many time-point measurements as
+#The cumulative variable will correspond to the average of these time-periods. Each cohort should include as many time-point measurements as
 #possible while minimising the loss of sample size. Minimum of 2 time-points (pregnancy time-point and one postnatal time-point).
 
-#NOTE: Life-long variable is up to the age of DNA methylation. E.g. If the methylation age is at 5y, exposure up to this age will be included 
-#in this variable. Therefore, in this case, the life-long variable will correspond to the average  between pregnancy, infancy (1-2y) and early childhood (3-5y).
+#NOTE: Cumulative variable is up to the age of DNA methylation. E.g. If the methylation age is at 5y, exposure up to this age will be included 
+#in this variable. Therefore, in this case, the cumulative variable will correspond to the average  between pregnancy, infancy (1-2y) and early childhood (3-5y).
 
-#Example Code in Helix: LC-ATH-LifeLong_variables_code.v1.R
+#Example Code in Helix: LC-ATH-Cumulative_variables_code.v1.R
 
 ##########################################################################################
 ### STEP 4: Load the dataframe with the exposures + additional covariates 
@@ -270,7 +270,7 @@ newmset.EUR
 #  element names: exprs
 #protocolData: none
 #phenoData
-# sampleNames: BIB_10058_1X BIB_10348_1X ... SAB_651_1X (1009 total)
+# sampleNames: sample1 sample2 ... sample1009 (1009 total)
 #  varLabels: id X ... h_pm25_lf (133 total)
 #  varMetadata: labelDescription
 #featureData: none
@@ -404,25 +404,25 @@ setwd(paste0(res.dir,"/Descriptive.info/Descriptive.Plots"))
 #################
 
 #######################################################################
-### Residential Sourrounding greenness: NDVI 300  life-long (numeric)
+### Residential Sourrounding greenness: NDVI 300  Cumulative (numeric)
 class(pData(newmset.EUR)$ndvi300_lf)
 pData(newmset.EUR)$ndvi300_lf <-as.numeric(pData(newmset.EUR)$ndvi300_lf)
 summary(pData(newmset.EUR)$ndvi300_lf)
 
 ### Histogram
 jpeg(paste0("Histogram_",cohort,".",ancestry,"_ndvi300_lf_",Date,".jpg"))
-hist(pData(newmset.EUR)$ndvi300_lf,main="Histogram ndvi300 life-long") 
+hist(pData(newmset.EUR)$ndvi300_lf,main="Histogram ndvi300 cumulative") 
 dev.off()
 
 ########################################################################
-### Residential Sourrounding greenness: NDVI 100 pregnancy (numeric) 
+### Residential Sourrounding greenness: NDVI 100 Cumulative (numeric) 
 class(pData(newmset.EUR)$ndvi100_lf)#ndvi100_lf
 pData(newmset.EUR)$ndvi100_lf <-as.numeric(pData(newmset.EUR)$ndvi100_lf)
 summary(pData(newmset.EUR)$ndvi100_lf)
 
 ### Histogram
 jpeg(paste0("Histogram_",cohort,".",ancestry,"_ndvi100_lf_",Date,".jpg"))
-hist(pData(newmset.EUR)$ndvi100_lf,main="Histogram ndvi100 life-long") 
+hist(pData(newmset.EUR)$ndvi100_lf,main="Histogram ndvi100 cumulative") 
 dev.off()
 
 #########################
@@ -474,7 +474,7 @@ summary(pData(newmset.EUR)$pm25_lf)
 
 ### Histogram
 jpeg(paste0("Histogram_",cohort,".",ancestry,"_PM25_lf_",Date,".jpg"))
-hist(pData(newmset.EUR)$pm25_lf,main="PM25 life-long (air pollution)") 
+hist(pData(newmset.EUR)$pm25_lf,main="PM25 cumulative (air pollution)") 
 dev.off()
 
 ###########################
@@ -563,8 +563,8 @@ summary(pData(newmset.EUR)$Mono_S)
 #STEP 10: ANALYSES: MODEL 1
 ###########################
 
-#M1:Child blood methylation = green spaces life-long + maternal age + maternal smoking pregnancy + child’s sex + child's age + 
-#child’s ancestry within major ancestry group (optional) + batch (optional) + cohort (optional) + selection variables (optional)
+#M1:Child blood methylation = green spaces cumulative + maternal age + maternal smoking pregnancy + childÂ’s sex + child's age + 
+#childÂ’s ancestry within major ancestry group (optional) + batch (optional) + cohort (optional) + selection variables (optional)
 
 #NOTE: this model is not adjusted by maternal education, neighbourhood SES, celltypes, PM25 preg and child z-bmi
                                                 
@@ -600,14 +600,14 @@ samplescmp.M1<-rownames(dd.EUR.M1.cc)
 newmset.EUR.M1<-newmset.EUR[,(sampleNames(newmset.EUR) %in% samplescmp.M1)]
 
 ##########################################################################################
-#10.3)Create variables with sorrounding residential greenness(NDVI Variable) transformation  
+#10.3)Create variables with surrounding residential greenness(NDVI Variable) transformation  
 ##########################################################################################
 
-### The effect of Residential Sorrounding Greenness variable (NDVI) will be reported by IQR, thus we will transform NDVI300 life-long and 
-#NDVI100 life-long variables.
+### The effect of Residential Surrounding Greenness variable (NDVI) will be reported by IQR, thus we will transform NDVI300 cumulative and 
+#NDVI100 cumulative variables.
 
 ################################
-#10.3.1) NDVI300 IQR life-long
+#10.3.1) NDVI300 IQR cumulative
 
 ### Calculate the IQR of NDVI300
 ndvi300.iqr<-iqr(dd.EUR.M1.cc$ndvi300_lf,na.rm=TRUE)
@@ -617,7 +617,7 @@ dd.EUR.M1.cc$ndvi300_lf.iqr<-dd.EUR.M1.cc$ndvi300_lf/ndvi300.iqr
 summary(dd.EUR.M1.cc$ndvi300_lf.iqr)
 
 ###############################
-#10.3.2) NDVI100 IQR life-long
+#10.3.2) NDVI100 IQR cumulative
 
 ### Calculate the IQR of NDVI100
 ndvi100.iqr<-iqr(dd.EUR.M1.cc$ndvi100_lf,na.rm=TRUE)
@@ -682,8 +682,8 @@ descriptive.vars.M1<-colnames(dd.EUR.M1.cc)#Select variables for the descriptive
 
 dd.EUR.M1.cc %>%
   dplyr::mutate(
-    ndvi300_lf = ff_label(ndvi300_lf, "NDVI300 life-long"),ndvi300_lf.iqr = ff_label(ndvi300_lf.iqr, "NDVI300 life-long IQR"),
-    ndvi100_lf = ff_label(ndvi100_lf, "NDVI100 life-long"),ndvi100_lf.iqr = ff_label(ndvi100_lf.iqr, "NDVI100 life-long IQR"),
+    ndvi300_lf = ff_label(ndvi300_lf, "NDVI300 cumulative"),ndvi300_lf.iqr = ff_label(ndvi300_lf.iqr, "NDVI300 cumulative IQR"),
+    ndvi100_lf = ff_label(ndvi100_lf, "NDVI100 cumulative"),ndvi100_lf.iqr = ff_label(ndvi100_lf.iqr, "NDVI100 cumulative IQR"),
     agebirth_m_y = ff_label(agebirth_m_y, "Maternal Age at delivery"),preg_smk = ff_label(preg_smk, "Maternal smoking preg"), 
     sex_methyl = ff_label(sex_methyl, "Child sex"),age_methyl = ff_label(age_methyl, "Child age")
     )%>%
@@ -697,8 +697,8 @@ colnames(DescriptiveTable.Mean.M1)<-c("Variables","levels","Mean (SD) or n(%)")
 
 dd.EUR.M1.cc %>%
   dplyr::mutate(
-    ndvi300_lf = ff_label(ndvi300_lf, "NDVI300 life-long"),ndvi300_lf.iqr = ff_label(ndvi300_lf.iqr, "NDVI300 life-long IQR"),
-    ndvi100_lf = ff_label(ndvi100_lf, "NDVI100 life-long"),ndvi100_lf.iqr = ff_label(ndvi100_lf.iqr, "NDVI100 life-long IQR"),
+    ndvi300_lf = ff_label(ndvi300_lf, "NDVI300 cumulative"),ndvi300_lf.iqr = ff_label(ndvi300_lf.iqr, "NDVI300 cumulative IQR"),
+    ndvi100_lf = ff_label(ndvi100_lf, "NDVI100 cumulative"),ndvi100_lf.iqr = ff_label(ndvi100_lf.iqr, "NDVI100 cumulative IQR"),
     agebirth_m_y = ff_label(agebirth_m_y, "Maternal Age at delivery"),preg_smk = ff_label(preg_smk, "Maternal smoking preg"),
     sex_methyl = ff_label(sex_methyl, "Child sex"),age_methyl = ff_label(age_methyl, "Child age")
     )%>%
@@ -799,7 +799,7 @@ write.csv(coefs.M1.all,paste0("M1.GScontVars.Covariates_",cohort,".",ancestry,"_
 
 
 ##############################################################################
-#10.6) EWAS GREEN SPACES LIFE-LONG USING ROBUST LINEAR REGRESSIONS WITH LIMMA
+#10.6) EWAS GREEN SPACES cumulative USING ROBUST LINEAR REGRESSIONS WITH LIMMA
 ##############################################################################
 
 ### Before starting with the EWAS analysis...
@@ -816,11 +816,11 @@ setwd(paste0(res.dir,"/EWAS.Results"))
 
 #newmset.EUR.M1
 
-# 10.6.1) Exposure NDVI300 Life-long
-# 10.6.2) Exposure NDVI100 Life-long 
+# 10.6.1) Exposure NDVI300 cumulative
+# 10.6.2) Exposure NDVI100 cumulative 
 
 ###################################
-# 10.6.1) Exposure NDVI300 Life-long
+# 10.6.1) Exposure NDVI300 cumulative
 
 ################
 # lf_N300_M1
@@ -863,7 +863,7 @@ qq(pvals,main=paste0("QQPlot_",cohort,".",ancestry,"_lf_N300_M1"))
 dev.off()
 
 ###################################
-# 10.6.2) Exposure NDVI100 life-long
+# 10.6.2) Exposure NDVI100 cumulative
             
 ################
 # lf_N100_M1
@@ -925,8 +925,8 @@ write.table(lambdas.table, paste0("Lambdas_",cohort,".",ancestry,"_M1_",Date,".t
 #STEP 11: ANALYSES: MODEL 2
 ###########################
 
-#M2:Child blood methylation = green spaces life-long + maternal age + maternal smoking pregnancy + child’s sex + child's age + 
-#child’s ancestry within major ancestry group (optional) + batch (optional) + cohort (optional) + selection variables (optional) + maternal education +
+#M2:Child blood methylation = green spaces cumulative + maternal age + maternal smoking pregnancy + childÂ’s sex + child's age + 
+#childÂ’s ancestry within major ancestry group (optional) + batch (optional) + cohort (optional) + selection variables (optional) + maternal education +
 #neighbourhood socio-economic status 
 
 #NOTE: this model is not adjusted by celltypes, PM25 preg and child z-bmi
@@ -962,14 +962,14 @@ samplescmp.M2<-rownames(dd.EUR.M2.cc)
 newmset.EUR.M2<-newmset.EUR[,(sampleNames(newmset.EUR) %in% samplescmp.M2)]
 
 ##########################################################################################
-#11.3)Create variables with sorrounding residential greenness(NDVI Variable) transformation  
+#11.3)Create variables with surrounding residential greenness(NDVI Variable) transformation  
 ##########################################################################################
 
-### The effect of Residential Sorrounding Greenness variable (NDVI) will be reported by IQR, thus we will transform NDVI300 life-long and
-#NDVI100 life-long variables.
+### The effect of Residential Sorrounding Greenness variable (NDVI) will be reported by IQR, thus we will transform NDVI300 cumulative and
+#NDVI100 cumulative variables.
 
 ################################
-#11.3.1) NDVI300 IQR life-long
+#11.3.1) NDVI300 IQR cumulative
 
 ### Calculate the IQR of NDVI300
 ndvi300.iqr<-iqr(dd.EUR.M2.cc$ndvi300_lf,na.rm=TRUE)
@@ -979,7 +979,7 @@ dd.EUR.M2.cc$ndvi300_lf.iqr<-dd.EUR.M2.cc$ndvi300_lf/ndvi300.iqr
 summary(dd.EUR.M2.cc$ndvi300_lf.iqr)
 
 ###############################
-#11.3.2) NDVI100 IQR life-long
+#11.3.2) NDVI100 IQR cumulative
 
 ### Calculate the IQR of NDVI100
 ndvi100.iqr<-iqr(dd.EUR.M2.cc$ndvi100_lf,na.rm=TRUE)
@@ -1021,7 +1021,7 @@ pData(newmset.EUR.M2)<-dd.EUR.M2.cc
 #celltypes proportions which should not have NAs. 
 
 ##############################################################################
-#11.6) EWAS GREEN SPACES LIFE-LONG USING ROBUST LINEAR REGRESSIONS WITH LIMMA
+#11.6) EWAS GREEN SPACES cumulative USING ROBUST LINEAR REGRESSIONS WITH LIMMA
 ##############################################################################
 
 ### Before starting with the EWAS analysis...
@@ -1033,11 +1033,11 @@ setwd(paste0(res.dir,"/EWAS.Results"))
 
 #newmset.EUR.M2
 
-# 11.6.1) Exposure NDVI300 Life-long
-# 11.6.2) Exposure NDVI100 Life-long 
+# 11.6.1) Exposure NDVI300 cumulative
+# 11.6.2) Exposure NDVI100 cumulative 
 
 ###################################
-# 11.6.1) Exposure NDVI300 Life-long
+# 11.6.1) Exposure NDVI300 cumulative
 
 ################
 # lf_N300_M2
@@ -1078,7 +1078,7 @@ qq(pvals,main=paste0("QQPlot_",cohort,".",ancestry,"_lf_N300_M2"))
 dev.off()
 
 ###################################
-# 11.6.2) Exposure NDVI100 life-long
+# 11.6.2) Exposure NDVI100 cumulative
             
 ################
 # lf_N100_M2
@@ -1135,8 +1135,8 @@ write.table(lambdas.table, paste0("Lambdas_",cohort,".",ancestry,"_M2",Date,".tx
 #STEP 12: ANALYSES: MODEL 3
 ###########################
 
-#M3:Child blood methylation = green spaces life-long + maternal age + maternal smoking pregnancy + child’s sex + child's age + 
-#child’s ancestry within major ancestry group (optional) + batch (optional) + cohort (optional) + selection variables (optional)  +
+#M3:Child blood methylation = green spaces cumulative + maternal age + maternal smoking pregnancy + childÂ’s sex + child's age + 
+#childÂ’s ancestry within major ancestry group (optional) + batch (optional) + cohort (optional) + selection variables (optional)  +
 #maternal education + neighbourhood socio-economic status + blood cellular composition
 
 #NOTE: this model is not adjusted by PM25 preg and child z-bmi
@@ -1151,7 +1151,7 @@ dd.EUR.M3<-pData(newmset.EUR)[,c("ndvi300_lf","ndvi100_lf", "agebirth_m_y","preg
                                  "gwas_pc3_eur","gwas_pc4_eur","gwas_pc5_eur","gwas_pc6_eur","gwas_pc7_eur","gwas_pc8_eur","gwas_pc9_eur","gwas_pc10_eur",
                                  "edu_m_0","areases_tert","CD8T_H","CD4T_H","NK_H","Bcell_H","Mono_H","Gran_H")]
 
-#añadir la cohorte seria importante!!
+#aÃ±adir la cohorte seria importante!!
 ###########################
 #12.2) Complete cases M3
 ###########################
@@ -1175,11 +1175,11 @@ newmset.EUR.M3<-newmset.EUR[,(sampleNames(newmset.EUR) %in% samplescmp.M3)]
 #12.3)Create variables with sorrounding residential greenness(NDVI Variable) transformation  
 ##########################################################################################
 
-### The effect of Residential Sorrounding Greenness variable (NDVI) will be reported by IQR, thus we will transform NDVI300 life-long and
-#NDVI100 life-long variables.
+### The effect of Residential Sorrounding Greenness variable (NDVI) will be reported by IQR, thus we will transform NDVI300 cumulative and
+#NDVI100 cumulative variables.
 
 ################################
-#12.3.1) NDVI300 IQR life-long
+#12.3.1) NDVI300 IQR cumulative
 
 ### Calculate the IQR of NDVI300
 ndvi300.iqr<-iqr(dd.EUR.M3.cc$ndvi300_lf,na.rm=TRUE)
@@ -1189,7 +1189,7 @@ dd.EUR.M3.cc$ndvi300_lf.iqr<-dd.EUR.M3.cc$ndvi300_lf/ndvi300.iqr
 summary(dd.EUR.M3.cc$ndvi300_lf.iqr)
 
 ###############################
-#12.3.2) NDVI100 IQR life-long
+#12.3.2) NDVI100 IQR cumulative
 
 ### Calculate the IQR of NDVI100
 ndvi100.iqr<-iqr(dd.EUR.M3.cc$ndvi100_lf,na.rm=TRUE)
@@ -1244,8 +1244,8 @@ descriptive.vars.M3<-colnames(dd.EUR.M3.cc)#Select variables for the descriptive
 
 dd.EUR.M3.cc %>%
   dplyr::mutate(
-    ndvi300_lf = ff_label(ndvi300_lf, "NDVI300 life-long"),ndvi300_lf.iqr = ff_label(ndvi300_lf.iqr, "NDVI300 life-long IQR"),
-    ndvi100_lf = ff_label(ndvi100_lf, "NDVI100 life-long"),ndvi100_lf.iqr = ff_label(ndvi100_lf.iqr, "NDVI100 life-long IQR"),
+    ndvi300_lf = ff_label(ndvi300_lf, "NDVI300 cumulative"),ndvi300_lf.iqr = ff_label(ndvi300_lf.iqr, "NDVI300 cumulative IQR"),
+    ndvi100_lf = ff_label(ndvi100_lf, "NDVI100 cumulative"),ndvi100_lf.iqr = ff_label(ndvi100_lf.iqr, "NDVI100 cumulative IQR"),
     agebirth_m_y = ff_label(agebirth_m_y, "Maternal Age at delivery"),edu_m_0 = ff_label(edu_m_0, "Maternal education"),
     areases_tert = ff_label(areases_tert, "Neighbourhood socio-economic status"),preg_smk = ff_label(preg_smk, "Maternal smoking preg"),
     sex_methyl = ff_label(sex_methyl, "Child sex"),age_methyl = ff_label(age_methyl, "Child age")
@@ -1260,8 +1260,8 @@ colnames(DescriptiveTable.Mean.M3)<-c("Variables","levels","Mean (SD) or n(%)")
 
 dd.EUR.M3.cc %>%
   dplyr::mutate(
-    ndvi300_lf = ff_label(ndvi300_lf, "NDVI300 life-long"),ndvi300_lf.iqr = ff_label(ndvi300_lf.iqr, "NDVI300 life-long IQR"),
-    ndvi100_lf = ff_label(ndvi100_lf, "NDVI100 life-long"),ndvi100_lf.iqr = ff_label(ndvi100_lf.iqr, "NDVI100 life-long IQR"),
+    ndvi300_lf = ff_label(ndvi300_lf, "NDVI300 cumulative"),ndvi300_lf.iqr = ff_label(ndvi300_lf.iqr, "NDVI300 cumulative IQR"),
+    ndvi100_lf = ff_label(ndvi100_lf, "NDVI100 cumulative"),ndvi100_lf.iqr = ff_label(ndvi100_lf.iqr, "NDVI100 cumulative IQR"),
     agebirth_m_y = ff_label(agebirth_m_y, "Maternal Age at delivery"),edu_m_0 = ff_label(edu_m_0, "Maternal education"),
     areases_tert = ff_label(areases_tert, "Neighbourhood socio-economic status"),preg_smk = ff_label(preg_smk, "Maternal smoking preg"),
     sex_methyl = ff_label(sex_methyl, "Child sex"),age_methyl = ff_label(age_methyl, "Child age")
@@ -1364,7 +1364,7 @@ write.csv(coefs.M3.all,paste0("M3.GScontVars.Covariates_",cohort,".",ancestry,"_
 
 
 ##############################################################################
-#12.6) EWAS GREEN SPACES LIFE-LONG USING ROBUST LINEAR REGRESSIONS WITH LIMMA
+#12.6) EWAS GREEN SPACES cumulative USING ROBUST LINEAR REGRESSIONS WITH LIMMA
 ##############################################################################
 
 ### Before starting with the EWAS analysis...
@@ -1376,11 +1376,11 @@ setwd(paste0(res.dir,"/EWAS.Results"))
 
 #newmset.EUR.M3
 
-# 12.6.1) Exposure NDVI300 Life-long
-# 12.6.2) Exposure NDVI100 Life-long 
+# 12.6.1) Exposure NDVI300 cumulative
+# 12.6.2) Exposure NDVI100 cumulative 
 
 ###################################
-# 12.6.1) Exposure NDVI300 Life-long
+# 12.6.1) Exposure NDVI300 cumulative
 
 ################
 # lf_N300_M3
@@ -1419,7 +1419,7 @@ qq(pvals,main=paste0("QQPlot_",cohort,".",ancestry,"_lf_N300_M3"))
 dev.off()
 
 ###################################
-# 12.6.2) Exposure NDVI100 life-long
+# 12.6.2) Exposure NDVI100 cumulative
             
 ################
 # lf_N100_M3
@@ -1477,9 +1477,9 @@ write.table(lambdas.table, paste0("Lambdas_",cohort,".",ancestry,"_M3_",Date,".t
 #STEP 13: ANALYSES: MODEL 4
 ###########################
 
-#M4:Child blood methylation = green spaces life-long + maternal age + maternal smoking pregnancy + child’s sex + child's age +
-#child’s ancestry within major ancestry group (optional) + batch (optional) + cohort (optional) + selection variables (optional) + 
-#maternal education + neighbourhood socio-economic status + blood cellular composition + PM2.5 life-long 
+#M4:Child blood methylation = green spaces cumulative + maternal age + maternal smoking pregnancy + childÂ’s sex + child's age +
+#childÂ’s ancestry within major ancestry group (optional) + batch (optional) + cohort (optional) + selection variables (optional) + 
+#maternal education + neighbourhood socio-economic status + blood cellular composition + PM2.5 cumulative 
                                                 
 #NOTE: this model is not adjusted by child z-bmi
 
@@ -1518,11 +1518,11 @@ newmset.EUR.M4<-newmset.EUR[,(sampleNames(newmset.EUR) %in% samplescmp.M4)]
 #13.3)Create variables with sorrounding residential greenness(NDVI Variable) transformation  
 ##########################################################################################
 
-### The effect of Residential Sorrounding Greenness variable (NDVI) will be reported by IQR, thus we will transform NDVI300 life-long and
-#NDVI100 life-long variables.
+### The effect of Residential Sorrounding Greenness variable (NDVI) will be reported by IQR, thus we will transform NDVI300 cumulative and
+#NDVI100 cumulative variables.
 
 ################################
-#13.3.1) NDVI300 IQR life-long
+#13.3.1) NDVI300 IQR cumulative
 
 ### Calculate the IQR of NDVI300
 ndvi300.iqr<-iqr(dd.EUR.M4.cc$ndvi300_lf,na.rm=TRUE)
@@ -1532,7 +1532,7 @@ dd.EUR.M4.cc$ndvi300_lf.iqr<-dd.EUR.M4.cc$ndvi300_lf/ndvi300.iqr
 summary(dd.EUR.M4.cc$ndvi300_lf.iqr)
 
 ###############################
-#13.3.2) NDVI100 IQR life-long
+#13.3.2) NDVI100 IQR cumulative
 
 ### Calculate the IQR of NDVI100
 ndvi100.iqr<-iqr(dd.EUR.M4.cc$ndvi100_lf,na.rm=TRUE)
@@ -1587,11 +1587,11 @@ descriptive.vars.M4<-colnames(dd.EUR.M4.cc)#Select variables for the descriptive
 
 dd.EUR.M4.cc %>%
   dplyr::mutate(
-    ndvi300_lf = ff_label(ndvi300_lf, "NDVI300 life-long"),ndvi300_lf.iqr = ff_label(ndvi300_lf.iqr, "NDVI300 life-long IQR"),
-    ndvi100_lf = ff_label(ndvi100_lf, "NDVI100 life-long"),ndvi100_lf.iqr = ff_label(ndvi100_lf.iqr, "NDVI100 life-long IQR"),
+    ndvi300_lf = ff_label(ndvi300_lf, "NDVI300 cumulative"),ndvi300_lf.iqr = ff_label(ndvi300_lf.iqr, "NDVI300 cumulative IQR"),
+    ndvi100_lf = ff_label(ndvi100_lf, "NDVI100 cumulative"),ndvi100_lf.iqr = ff_label(ndvi100_lf.iqr, "NDVI100 cumulative IQR"),
     agebirth_m_y = ff_label(agebirth_m_y, "Maternal Age at delivery"),edu_m_0 = ff_label(edu_m_0, "Maternal education"),
     areases_tert = ff_label(areases_tert, "Neighbourhood socio-economic status"),preg_smk= ff_label(preg_smk, "Maternal smoking preg"),
-    sex_methyl = ff_label(sex_methyl, "Child sex"),age_methyl = ff_label(age_methyl, "Child age"),pm25_lf = ff_label(pm25_lf, "PM2.5 levels life-long")
+    sex_methyl = ff_label(sex_methyl, "Child sex"),age_methyl = ff_label(age_methyl, "Child age"),pm25_lf = ff_label(pm25_lf, "PM2.5 levels cumulative")
     )%>%
   summary_factorlist(dependent=NULL,descriptive.vars.M4,cont="mean",column=TRUE,na_include=TRUE,total_col=TRUE)->DescriptiveTable.Mean.M4
 
@@ -1603,11 +1603,11 @@ colnames(DescriptiveTable.Mean.M4)<-c("Variables","levels","Mean (SD) or n(%)")
 
 dd.EUR.M4.cc %>%
   dplyr::mutate(
-    ndvi300_lf = ff_label(ndvi300_lf, "NDVI300 life-long"),ndvi300_lf.iqr = ff_label(ndvi300_lf.iqr, "NDVI300 life-long IQR"),
-    ndvi100_lf = ff_label(ndvi100_lf, "NDVI100 life-long"),ndvi100_lf.iqr = ff_label(ndvi100_lf.iqr, "NDVI100 life-long IQR"),
+    ndvi300_lf = ff_label(ndvi300_lf, "NDVI300 cumulative"),ndvi300_lf.iqr = ff_label(ndvi300_lf.iqr, "NDVI300 cumulative IQR"),
+    ndvi100_lf = ff_label(ndvi100_lf, "NDVI100 cumulative"),ndvi100_lf.iqr = ff_label(ndvi100_lf.iqr, "NDVI100 cumulative IQR"),
     agebirth_m_y = ff_label(agebirth_m_y, "Maternal Age at delivery"),edu_m_0 = ff_label(edu_m_0, "Maternal education"),
     areases_tert = ff_label(areases_tert, "Neighbourhood socio-economic status"),preg_smk= ff_label(preg_smk, "Maternal smoking preg"),
-    sex_methyl = ff_label(sex_methyl, "Child sex"),age_methyl = ff_label(age_methyl, "Child age"),pm25_lf = ff_label(pm25_lf, "PM2.5 levels life-long")
+    sex_methyl = ff_label(sex_methyl, "Child sex"),age_methyl = ff_label(age_methyl, "Child age"),pm25_lf = ff_label(pm25_lf, "PM2.5 levels cumulative")
     )%>%
   summary_factorlist(dependent=NULL,descriptive.vars.M4,cont="median",column=TRUE,na_include=TRUE,total_col=TRUE)->DescriptiveTable.Median.M4
 
@@ -1707,7 +1707,7 @@ write.csv(coefs.M4.all,paste0("M4.GScontVars.Covariates_",cohort,".",ancestry,"_
 
 
 ##############################################################################
-#13.6) EWAS GREEN SPACES LIFE-LONG USING ROBUST LINEAR REGRESSIONS WITH LIMMA
+#13.6) EWAS GREEN SPACES CUMULATIVE USING ROBUST LINEAR REGRESSIONS WITH LIMMA
 ##############################################################################
 
 ### Before starting with the EWAS analysis...
@@ -1719,11 +1719,11 @@ setwd(paste0(res.dir,"/EWAS.Results"))
 
 #newmset.EUR.M4
 
-# 13.6.1) Exposure NDVI300 Life-long
-# 13.6.2) Exposure NDVI100 Life-long 
+# 13.6.1) Exposure NDVI300 cumulative
+# 13.6.2) Exposure NDVI100 cumulative 
 
 ###################################
-# 13.6.1) Exposure NDVI300 Life-long
+# 13.6.1) Exposure NDVI300 cumulative
 
 ################
 # lf_N300_M4
@@ -1762,7 +1762,7 @@ qq(pvals,main=paste0("QQPlot_",cohort,".",ancestry,"_lf_N300_M4"))
 dev.off()
 
 ###################################
-# 13.6.2) Exposure NDVI100 life-long
+# 13.6.2) Exposure NDVI100 cumulative
             
 ################
 # lf_N100_M4
@@ -1814,349 +1814,6 @@ lambdas.table<-rbind(lambda.lf_N300_M4,lambda.lf_N100_M4)
 colnames(lambdas.table)<-"Lambdas M4"
 
 write.table(lambdas.table, paste0("Lambdas_",cohort,".",ancestry,"_M4_",Date,".txt"), na="NA")
-
-
-###########################
-#STEP 14: ANALYSES: MODEL 5
-###########################
-
-#M5:Child blood methylation = green spaces life-long + maternal age + maternal smoking pregnancy + child’s sex + child's age +
-#child’s ancestry within major ancestry group (optional) + batch (optional) + cohort (optional) + selection variables (optional) + maternal education +
-#neighbourhood socio-economic status + blood cellular composition + PM2.5 life-long + child's zBMI
-                                                
-#IMPORTANT! Before running the analyses, please make sure that you have done STEP 9) Check variables: summaries and plots. In this way, you make sure that the variables are coded as indicated in the analysis plan.
-
-###########################################
-#14.1) Select variables needed for Model 5
-###########################################
-
-dd.EUR.M5<-pData(newmset.EUR)[,c("ndvi300_lf","ndvi100_lf","agebirth_m_y","preg_smk","sex_methyl","age_methyl","gwas_pc1_eur","gwas_pc2_eur","gwas_pc3_eur",
-                                 "gwas_pc4_eur","gwas_pc5_eur","gwas_pc6_eur","gwas_pc7_eur","gwas_pc8_eur","gwas_pc9_eur","gwas_pc10_eur","edu_m_0",
-                                 "areases_tert","CD8T_H","CD4T_H","NK_H","Bcell_H","Mono_H","Gran_H","pm25_lf","zbmi_methyl")]
-
-
-###########################
-#14.2) Complete cases M5
-###########################
-
-############################################################################
-#14.2.1) Create a new dataframe with complete cases from variables in Model 5
-
-dd.EUR.M5.cc<-dd.EUR.M5[complete.cases(dd.EUR.M5),]
-
-##################################
-#14.2.2) Complete cases M5 samples
-
-samplescmp.M5<-rownames(dd.EUR.M5.cc)
-
-################################################################
-#14.2.3) Subset the ExpressionSet with Complete cases M5 samples
-
-newmset.EUR.M5<-newmset.EUR[,(sampleNames(newmset.EUR) %in% samplescmp.M5)]
-
-##########################################################################################
-#14.3)Create variables with sorrounding residential greenness(NDVI Variable) transformation  
-##########################################################################################
-
-### The effect of Residential Sorrounding Greenness variable (NDVI) will be reported by IQR, thus we will transform NDVI300 life-long and
-#NDVI100 life-long variables.
-
-################################
-#14.3.1) NDVI300 IQR life-long
-
-### Calculate the IQR of NDVI300
-ndvi300.iqr<-iqr(dd.EUR.M5.cc$ndvi300_lf,na.rm=TRUE)
-
-### The formula to create this variable corresponds to the original variable value divided by the interquartile value of the variable 
-dd.EUR.M5.cc$ndvi300_lf.iqr<-dd.EUR.M5.cc$ndvi300_lf/ndvi300.iqr
-summary(dd.EUR.M5.cc$ndvi300_lf.iqr)
-
-###############################
-#14.3.2) NDVI100 IQR life-long
-
-### Calculate the IQR of NDVI100
-ndvi100.iqr<-iqr(dd.EUR.M5.cc$ndvi100_lf,na.rm=TRUE)
-
-### The formula to create this variable corresponds to the original variable value divided by the interquartile value of the variable 
-dd.EUR.M5.cc$ndvi100_lf.iqr<-dd.EUR.M5.cc$ndvi100_lf/ndvi100.iqr
-summary(dd.EUR.M5.cc$ndvi100_lf.iqr)
-
-#######################################################################################################################
-#14.4)Include the new dataframe with complete cases M5 and the created NDVI variables transformed in the ExpressionSet
-#######################################################################################################################
-
-#Include the new dataframe with the complete case samples for M5 and the created NDVI variables transformed in the ExpressionSet subsetted in section 14.2.3.
-
-###################
-#14.4.1) Check order 
-
-# Before including the new dataframe with the complete case samples for M5 and the created NDVI variables transformed in the ExpressionSet, 
-#check if the samples are in the same order. If you do not order samples as they are in the ExpressionSet, you could incorrectly assign the values of
-#the variables to the samples and therefore also to the methylation. 
-
-table(ifelse(rownames(dd.EUR.M5.cc)==sampleNames(newmset.EUR.M5),"Matched","--NOT MATCHED--"))
-#Matched
-#    707
-
-#In our case, samples are ordered in the same way. In case that your samples are not ordered, please, see STEP 6 for an example of how to do this. 
-
-#############################################################
-#14.4.2) Include the new dataframe in the ExpressionSet
-
-pData(newmset.EUR.M5)<-dd.EUR.M5.cc
-
-####################################
-#14.5) Descriptive analyses for M5
-####################################
-
-#14.5.1) Descriptive tables
-#14.5.2) Correlation between exposures
-#14.5.3) Associations between green spaces vars and covariates
-
-
-###########################
-#14.5.1) Descriptive tables
-
-### Go to the Descriptive.Tables directory 
-setwd(paste0(res.dir,"/Descriptive.info/Descriptive.Tables"))
-
-#a) Mean (SD)
-##############
-
-descriptive.vars.M5<-colnames(dd.EUR.M5.cc)#Select variables for the descriptives
-
-dd.EUR.M5.cc %>%
-  dplyr::mutate(
-    ndvi300_lf = ff_label(ndvi300_lf, "NDVI300 life-long"),ndvi300_lf.iqr = ff_label(ndvi300_lf.iqr, "NDVI300 life-long IQR"),
-    ndvi100_lf = ff_label(ndvi100_lf, "NDVI100 life-long"),ndvi100_lf.iqr = ff_label(ndvi100_lf.iqr, "NDVI100 life-long IQR"),
-    agebirth_m_y = ff_label(agebirth_m_y, "Maternal Age at delivery"),edu_m_0 = ff_label(edu_m_0, "Maternal education"),
-    areases_tert = ff_label(areases_tert, "Neighbourhood socio-economic status"),preg_smk = ff_label(preg_smk, "Maternal smoking preg"),
-    sex_methyl = ff_label(sex_methyl, "Child sex"),age_methyl = ff_label(age_methyl, "Child age"),pm25_lf = ff_label(pm25_lf, "PM2.5 levels life-long"),
-    zbmi_methyl= ff_label(zbmi_methyl, "Child z-bmi")
-    )%>%
-  summary_factorlist(dependent=NULL,descriptive.vars.M5,cont="mean",column=TRUE,na_include=TRUE,total_col=TRUE)->DescriptiveTable.Mean.M5
-
-DescriptiveTable.Mean.M5<-DescriptiveTable.Mean.M5[,c("label","levels","Total")]
-colnames(DescriptiveTable.Mean.M5)<-c("Variables","levels","Mean (SD) or n(%)")
-
-#Median (IQR)
-#############
-
-dd.EUR.M5.cc %>%
-  dplyr::mutate(
-    ndvi300_lf = ff_label(ndvi300_lf, "NDVI300 life-long"),ndvi300_lf.iqr = ff_label(ndvi300_lf.iqr, "NDVI300 life-long IQR"),
-    ndvi100_lf = ff_label(ndvi100_lf, "NDVI100 life-long"),ndvi100_lf.iqr = ff_label(ndvi100_lf.iqr, "NDVI100 life-long IQR"),
-    agebirth_m_y = ff_label(agebirth_m_y, "Maternal Age at delivery"),edu_m_0 = ff_label(edu_m_0, "Maternal education"),
-    areases_tert = ff_label(areases_tert, "Neighbourhood socio-economic status"),preg_smk = ff_label(preg_smk, "Maternal smoking preg"),
-    sex_methyl = ff_label(sex_methyl, "Child sex"),age_methyl = ff_label(age_methyl, "Child age"),pm25_lf = ff_label(pm25_lf, "PM2.5 levels life-long"),
-    zbmi_methyl= ff_label(zbmi_methyl, "Child z-bmi")
-    )%>%
-  summary_factorlist(dependent=NULL,descriptive.vars.M5,cont="median",column=TRUE,na_include=TRUE,total_col=TRUE)->DescriptiveTable.Median.M5
-
-DescriptiveTable.Median.M5<-DescriptiveTable.Median.M5[,c("label","levels","Total")]
-colnames(DescriptiveTable.Median.M5)<-c("Variables","levels","Mean (SD) or n(%)")
-
-### Create a single descriptive table with all variables
-
-DescriptiveTable.final.M5<-cbind(DescriptiveTable.Mean.M5,DescriptiveTable.Median.M5)
-DescriptiveTable.final.M5<-DescriptiveTable.final.M5[,c(1:3,5:6)]
-             
-write.table(
-  DescriptiveTable.final.M5, file=paste0("M5.Descriptive.table.",cohort,".",ancestry,".cc.",Date,".txt"),col.names=T, row.names=F, quote=F, sep="\t")
-
-######################################
-#14.5.2) Correlation between exposures
-
-### Go to the Correlations directory 
-setwd(paste0(res.dir,"/Descriptive.info/Correlations"))
-
-### a)Correlation between NDVI300 and NDVI100 (Continuous vs continuous)
-#########################################################################
-
-cor.ndvi300.100<-dd.EUR.M5.cc[,c("ndvi300_lf","ndvi100_lf")]
-#Create plot
-plot.cor.ndvi300.100<-ggpairs(cor.ndvi300.100, title="Correlation between NDVI300 and NDVI100") 
-
-#Define a path 
-file.create(paste0("M5.CorrelationNDVI300vsNDVI100.",cohort,".",ancestry,"_",Date,".pdf"))
-
-path1.M5<-file.path(paste0("M5.CorrelationNDVI300vsNDVI100.",cohort,".",ancestry,"_",Date,".pdf"))
-
-pdf(path1.M5)
-print(plot.cor.ndvi300.100)
-dev.off()
-
-###############################################################
-#14.5.3) Associations between Green Spaces vars and Covariates
-
-### Go to the GSvsCovariates directory
-setwd(paste0(res.dir,"/Descriptive.info/GSvsCovariates"))
-
-############################################################################
-##a) Association beweeen Continuous Green spaces variables  and Covariables
-
-GSexposures<-c("ndvi300_lf.iqr","ndvi100_lf.iqr")
-
-Covariates<-c("edu_m_0","areases_tert", "agebirth_m_y","preg_smk","sex_methyl","age_methyl","pm25_lf","zbmi_methyl","CD8T_H","CD4T_H","NK_H","Bcell_H",
-              "Mono_H","Gran_H","gwas_pc1_eur","gwas_pc2_eur","gwas_pc3_eur","gwas_pc4_eur","gwas_pc5_eur","gwas_pc6_eur","gwas_pc7_eur","gwas_pc8_eur",
-              "gwas_pc9_eur","gwas_pc10_eur")#Specify variables M5
-
-coefs.M5=as.data.frame(matrix(NA,nrow=1,ncol=10))
-colnames(coefs.M5)=c("DateTime","GreenSpaceVar","Covariates","Model","BetaNoStand", "SE", "P","R2","R2adj","N")
-
-count=1
-for(j in 1:length(GSexposures)) {
-  print(GSexposures[j])
-  results=NULL
-  for(i in 1:length(Covariates)) {
-    print(Covariates[i])
-    ff <- paste0(GSexposures[j],"~",Covariates[i],sep="") 
-    fit <- lm(ff,data=dd.EUR.M5.cc)
-    s <-summary(fit)
-    res <- s$coefficients
-    R2<-s$r.squared
-    R2.adj<- s$adj.r.squared
-    
-    #Save analysis details and coefficients
-    coefs.M5[count,1]=gsub(" ","_",Sys.time())
-    coefs.M5[count,2]=GSexposures[j]
-    coefs.M5[count,3]=Covariates[i]
-    coefs.M5[count,4]=ff
-    coefs.M5[count,5:7]=res[2,c(1,2,4)]
-    coefs.M5[count,8]= R2
-    coefs.M5[count,9]=R2.adj
-    coefs.M5[count,10]= s$df[2]
-    
-    count=count+1
-    
-  }
-}
-
-#Multiple testing correction by FDR 
-
-### ndvi300 lf IQR vs Covariates
-coefs.M5.subset.ndvi300<-subset(coefs.M5, coefs.M5$GreenSpaceVar == "ndvi300_lf.iqr")
-coefs.M5.subset.ndvi300$Padj<-  p.adjust(coefs.M5.subset.ndvi300$P, method="fdr")
-
-### ndvi100 lf IQR vs Covariates
-coefs.M5.subset.ndvi100<-subset(coefs.M5, coefs.M5$GreenSpaceVar == "ndvi100_lf.iqr")
-coefs.M5.subset.ndvi100$Padj<-  p.adjust(coefs.M5.subset.ndvi100$P, method="fdr")
-
-### Create one table with all results
-coefs.M5.all<-rbind(coefs.M5.subset.ndvi300,coefs.M5.subset.ndvi100)
-
-write.csv(coefs.M5.all,paste0("M5.GScontVars.Covariates_",cohort,".",ancestry,"_",Date,".csv"), row.names = TRUE)
-
-
-##############################################################################
-#14.6) EWAS GREEN SPACES LIFE-LONG USING ROBUST LINEAR REGRESSIONS WITH LIMMA
-##############################################################################
-
-### Before starting with the EWAS analysis...
-
-### Go to the EWAS results directory
-setwd(paste0(res.dir,"/EWAS.Results"))
-
-#For the analysis use ExpressionSet subset created in section 13.1.3. 
-
-#newmset.EUR.M5
-
-# 14.6.1) Exposure NDVI300 Life-long
-# 14.6.2) Exposure NDVI100 Life-long 
-
-###################################
-# 14.6.1) Exposure NDVI300 Life-long
-
-################
-# lf_N300_M5
-################
-
-# a) Run EWAS
-
-### Design the model
-design.lf_N300_M5<-model.matrix(~ndvi300_lf.iqr + agebirth_m_y + preg_smk + sex_methyl + age_methyl + gwas_pc1_eur + gwas_pc2_eur + gwas_pc3_eur +
-                                  gwas_pc4_eur + gwas_pc5_eur + gwas_pc6_eur + gwas_pc7_eur + gwas_pc8_eur + gwas_pc9_eur + gwas_pc10_eur + edu_m_0+
-                                  areases_tert + CD8T_H + CD4T_H + NK_H + Bcell_H + Mono_H + Gran_H + pm25_lf + zbmi_methyl, data=pData(newmset.EUR.M5))
-
-### Run Robust linear regression model with limma
-fit.lf_N300_M5<-limma::lmFit(newmset.EUR.M5,design=design.lf_N300_M5, method="robust")
-fit.lf_N300_M5<-limma::eBayes(fit.lf_N300_M5)
-lf_N300_M5<-limma::topTable(fit.lf_N300_M5, coef =2, number = Inf,sort.by="none",confint=TRUE)
-lf_N300_M5$SE <- (sqrt(fit.lf_N300_M5$s2.post) *fit.lf_N300_M5$stdev.unscaled)[, 2]
-head(lf_N300_M5)
-
-###  Export results
-
-write.table(lf_N300_M5, paste0("EWAS_GS_",cohort,".",ancestry,"_lf_N300_M5_",Date,".txt"), na="NA") 
-            
-# b) Calculate lambda
-lambda.lf_N300_M5<- qchisq(median(lf_N300_M5$P.Value,na.rm=T), df = 1, lower.tail = F)/qchisq(0.5, 1)
-lambda.lf_N300_M5
-
-# c) QQ plot 
-
-### Go to QQplots directory
-setwd(paste0(res.dir,"/EWAS.Results/QQPlots"))
-
-pvals<-lf_N300_M5$P.Value
-jpeg(paste0("QQPlot_",cohort,".",ancestry,"_lf_N300_M5_",Date,".jpg"))
-qq(pvals,main=paste0("QQPlot_",cohort,".",ancestry,"_lf_N300_M5")) 
-dev.off()
-
-###################################
-# 14.6.2) Exposure NDVI100 life-long
-            
-################
-# lf_N100_M5
-################
-
-
-# a) Run EWAS
-
-### Design the model
-design.lf_N100_M5<-model.matrix(~ndvi100_lf.iqr + agebirth_m_y + preg_smk + sex_methyl + age_methyl + gwas_pc1_eur + gwas_pc2_eur + gwas_pc3_eur + 
-                                  gwas_pc4_eur + gwas_pc5_eur + gwas_pc6_eur + gwas_pc7_eur + gwas_pc8_eur + gwas_pc9_eur + gwas_pc10_eur + edu_m_0+
-                                  areases_tert+  CD8T_H + CD4T_H + NK_H + Bcell_H + Mono_H + Gran_H +  pm25_lf + zbmi_methyl, data=pData(newmset.EUR.M5))
-
-### Run Robust linear regression model with limma
-fit.lf_N100_M5<-limma::lmFit(newmset.EUR.M5,design=design.lf_N100_M5, method="robust")
-fit.lf_N100_M5<-limma::eBayes(fit.lf_N100_M5)
-lf_N100_M5<-limma::topTable(fit.lf_N100_M5, coef =2, number = Inf,sort.by="none",confint=TRUE)
-lf_N100_M5$SE <- (sqrt(fit.lf_N100_M5$s2.post) *fit.lf_N100_M5$stdev.unscaled)[, 2]
-head(lf_N100_M5)
-
-###  Export results
-setwd(paste0(res.dir,"/EWAS.Results"))
-write.table(lf_N100_M5, paste0("EWAS_GS_",cohort,".",ancestry,"_lf_N100_M5_",Date,".txt"), na="NA") 
-            
-# b) Calculate lambda
-lambda.lf_N100_M5<- qchisq(median(lf_N100_M5$P.Value,na.rm=T), df = 1, lower.tail = F)/qchisq(0.5, 1)
-lambda.lf_N100_M5
-
-# c) QQ plot 
-
-### Go to QQplots directory
-setwd(paste0(res.dir,"/EWAS.Results/QQPlots"))
-
-pvals<-lf_N100_M5$P.Value
-jpeg(paste0("QQPlot_",cohort,".",ancestry,"_lf_N100_M5_",Date,".jpg"))
-qq(pvals,main=paste0("QQPlot_",cohort,".",ancestry,"_lf_N100_M5")) 
-dev.off()
-
-              
-####################
-#14.7) LAMBDAS M5
-####################
-
-### Create lambdas table M5
-
-setwd(paste0(res.dir,"/EWAS.Results/Lambdas"))
-                                                          
-lambdas.table<-rbind(lambda.lf_N300_M5,lambda.lf_N100_M5)
-colnames(lambdas.table)<-"Lambdas M5"
-
-write.table(lambdas.table, paste0("Lambdas_",cohort,".",ancestry,"_M5_",Date,".txt"), na="NA")
-
 
 #################
 #IMPORTANT
